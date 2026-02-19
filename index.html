@@ -1,13 +1,601 @@
 <!doctype html>
 <html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Car Parts</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScanPart – Autoersatzteile scannen & verkaufen</title>
+  <meta name="description" content="Fotografiere dein Teil, lass die KI Details erkennen und erstelle automatisch ein Listing – in Sekunden." />
 
-  <body>
-    <h1>Hallo Welt 👋</h1>
-    <p>Das ist eine einfache HTML-Seite.</p>
-  </body>
+  <style>
+    /* -----------------------------
+       Theme: Amber / Orange + Slate
+       ----------------------------- */
+    :root{
+      --bg0:#0b1020;        /* deep navy */
+      --bg1:#0f172a;        /* slate 900-ish */
+      --card:#121a2f;       /* elevated card */
+      --card2:#0f162b;      /* alt card */
+      --border:rgba(255,255,255,.08);
+
+      --text:#e5e7eb;       /* gray-200 */
+      --muted:rgba(229,231,235,.72);
+
+      --accent:#f59e0b;     /* amber-500 */
+      --accent2:#fb7185;    /* rose-400 (secondary pop) */
+      --good:#22c55e;
+
+      --shadow: 0 12px 30px rgba(0,0,0,.38);
+      --radius: 18px;
+      --radius2: 26px;
+
+      --container: 1120px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(900px 450px at 15% 10%, rgba(245,158,11,.22), transparent 55%),
+        radial-gradient(800px 420px at 85% 15%, rgba(251,113,133,.16), transparent 55%),
+        radial-gradient(900px 520px at 60% 85%, rgba(245,158,11,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .container{width:min(var(--container), calc(100% - 48px)); margin:0 auto}
+    .glass{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+    }
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:50;
+      background: linear-gradient(180deg, rgba(11,16,32,.80), rgba(11,16,32,.45));
+      border-bottom:1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:16px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.2px}
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background:
+        radial-gradient(12px 12px at 30% 30%, rgba(255,255,255,.35), transparent 55%),
+        linear-gradient(135deg, rgba(245,158,11,1), rgba(251,113,133,1));
+      box-shadow: 0 10px 20px rgba(245,158,11,.20);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(18px 18px at 70% 70%, rgba(255,255,255,.18), transparent 60%);
+    }
+    .navRight{display:flex; align-items:center; gap:10px}
+    .pill{
+      padding:8px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:rgba(229,231,235,.9);
+      font-weight:600;
+    }
+    .pill:hover{background: rgba(255,255,255,.06)}
+    .btn{
+      border:0; cursor:pointer;
+      padding:10px 14px;
+      border-radius: 12px;
+      font-weight:700;
+      display:inline-flex; align-items:center; gap:10px;
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      will-change: transform;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btnPrimary{
+      background: linear-gradient(135deg, var(--accent), #f97316);
+      color:#140a00;
+      box-shadow: 0 14px 26px rgba(245,158,11,.22);
+    }
+    .btnPrimary:hover{filter: brightness(1.05)}
+    .btnGhost{
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      color: rgba(229,231,235,.95);
+    }
+    .btnGhost:hover{background: rgba(255,255,255,.07)}
+
+    /* Hero */
+    .hero{
+      padding: 56px 0 18px;
+      position:relative;
+    }
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+    @media (max-width: 900px){
+      .heroGrid{grid-template-columns:1fr}
+      .hero{padding-top:34px}
+    }
+
+    .heroCard{
+      padding: 28px;
+      border-radius: var(--radius2);
+      position:relative;
+      overflow:hidden;
+    }
+    .heroCard::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(500px 240px at 20% 10%, rgba(245,158,11,.22), transparent 60%),
+        radial-gradient(500px 240px at 80% 20%, rgba(251,113,133,.16), transparent 60%);
+      filter: blur(0px);
+      pointer-events:none;
+    }
+    .heroCard > *{position:relative}
+
+    .kicker{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(229,231,235,.9);
+      font-weight:700;
+      letter-spacing:.2px;
+      width: fit-content;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px; background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(245,158,11,.14);
+    }
+    h1{
+      margin: 14px 0 10px;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1.06;
+      letter-spacing: -.8px;
+    }
+    .gradientText{
+      background: linear-gradient(135deg, var(--accent), #f97316 55%, var(--accent2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+    }
+    .sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      max-width: 56ch;
+      font-size: 16px;
+    }
+
+    .heroActions{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 14px;
+      align-items:center;
+    }
+    .upload{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      margin-top: 16px;
+    }
+    .file{
+      position:relative;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:1px dashed rgba(255,255,255,.16);
+      background: rgba(255,255,255,.03);
+      min-width: 260px;
+    }
+    .file input{
+      position:absolute; inset:0; opacity:0; cursor:pointer;
+    }
+    .fileHint{color: rgba(229,231,235,.86); font-weight:700}
+    .fileSmall{display:block; color: var(--muted); font-weight:600; font-size: 12px; margin-top: 2px}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(229,231,235,.9);
+      font-weight:700;
+      font-size: 13px;
+    }
+    .check{
+      width:18px; height:18px; border-radius:6px;
+      background: rgba(34,197,94,.14);
+      border:1px solid rgba(34,197,94,.35);
+      display:grid; place-items:center;
+      color: var(--good);
+      font-weight:900;
+      font-size: 12px;
+      line-height:1;
+    }
+
+    /* Side panel */
+    .side{
+      padding: 22px;
+      border-radius: var(--radius2);
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+      overflow:hidden;
+      position:relative;
+    }
+    .side::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(520px 220px at 40% 20%, rgba(245,158,11,.16), transparent 60%),
+        radial-gradient(520px 220px at 80% 60%, rgba(251,113,133,.12), transparent 60%);
+      pointer-events:none;
+    }
+    .side > *{position:relative}
+    .mock{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      padding: 16px;
+      display:flex;
+      gap: 12px;
+      align-items:center;
+    }
+    .mockIcon{
+      width:44px; height:44px; border-radius:14px;
+      background: rgba(245,158,11,.18);
+      border:1px solid rgba(245,158,11,.35);
+      display:grid; place-items:center;
+      color: rgba(255,209,140,1);
+      font-weight:900;
+    }
+    .mockTitle{font-weight:900}
+    .mockDesc{color: var(--muted); font-weight:600; font-size: 13px; margin-top: 2px}
+
+    /* Sections */
+    section{padding: 26px 0}
+    .sectionTitle{
+      font-size: 22px;
+      margin: 6px 0 16px;
+      letter-spacing: -.2px;
+    }
+    .grid3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 900px){ .grid3{grid-template-columns:1fr} }
+
+    .card{
+      padding: 18px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(0,0,0,.26);
+      position:relative;
+      overflow:hidden;
+      min-height: 138px;
+    }
+    .card::after{
+      content:"";
+      position:absolute; inset:auto -40px -40px auto;
+      width: 160px; height: 160px; border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(245,158,11,.22), transparent 60%);
+      transform: rotate(25deg);
+      pointer-events:none;
+    }
+    .cardTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .badge{
+      width:40px; height:40px; border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      color: rgba(229,231,235,.92);
+      font-weight:900;
+    }
+    .card h3{margin: 10px 0 6px; font-size: 16px}
+    .card p{margin:0; color: var(--muted); font-weight:600; font-size: 13px}
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items:stretch;
+    }
+    @media (max-width: 900px){ .split{grid-template-columns:1fr} }
+
+    .list{
+      padding: 18px;
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .li{
+      display:flex; gap:10px; align-items:flex-start;
+      padding: 10px 0;
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+    .li:first-child{border-top:0; padding-top:0}
+    .li .ico{
+      width:34px; height:34px; border-radius: 14px;
+      background: rgba(245,158,11,.14);
+      border:1px solid rgba(245,158,11,.30);
+      display:grid; place-items:center;
+      color: rgba(255,209,140,1);
+      font-weight:900;
+      flex:0 0 auto;
+    }
+    .li b{display:block}
+    .li span{display:block; color: var(--muted); font-weight:600; font-size: 13px; margin-top: 2px}
+
+    .cta{
+      padding: 20px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(700px 220px at 25% 20%, rgba(245,158,11,.18), transparent 60%),
+        radial-gradient(700px 220px at 80% 60%, rgba(251,113,133,.12), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 14px;
+      overflow:hidden;
+      position:relative;
+    }
+    .cta h2{margin:0; font-size: 18px}
+    .cta p{margin: 6px 0 0; color: var(--muted); font-weight:600; font-size: 13px; max-width: 60ch}
+    .car{
+      width:56px; height:56px; border-radius: 18px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      display:grid; place-items:center;
+      font-size: 26px;
+      flex: 0 0 auto;
+    }
+
+    footer{
+      padding: 24px 0 42px;
+      color: rgba(229,231,235,.65);
+      font-weight:600;
+      font-size: 13px;
+    }
+
+    /* Small helpers */
+    .muted{color: var(--muted)}
+    .spacer{height: 6px}
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="#">
+          <span class="logo" aria-hidden="true"></span>
+          <span>ScanPart</span>
+        </a>
+
+        <div class="navRight">
+          <a class="pill" href="#how">So funktioniert’s</a>
+          <a class="pill" href="#features">Vorteile</a>
+          <a class="btn btnGhost" href="#login" aria-label="Anmelden">
+            Anmelden
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <div class="container hero">
+      <div class="heroGrid">
+        <div class="glass heroCard">
+          <div class="kicker"><span class="dot"></span> KI-Listing in Sekunden</div>
+
+          <h1>
+            Autoersatzteile<br>
+            <span class="gradientText">scannen & verkaufen</span>
+          </h1>
+
+          <p class="sub">
+            Fotografiere dein Teil, lass die KI alle Details erkennen und erstelle automatisch ein perfektes Listing.
+            In Sekunden – mit Kategorie, Zustand & Preisvorschlag.
+          </p>
+
+          <div class="heroActions">
+            <button class="btn btnPrimary" type="button">
+              <!-- icon -->
+              <span aria-hidden="true">📸</span>
+              Teil scannen
+            </button>
+
+            <a class="btn btnGhost" href="#how">
+              <span aria-hidden="true">⚡</span>
+              Demo ansehen
+            </a>
+
+            <span class="chip"><span class="check">✓</span> Sicher & schnell</span>
+            <span class="chip"><span class="check">✓</span> Auto-fokussiert</span>
+          </div>
+
+          <div class="upload" aria-label="Upload">
+            <div class="file" role="button" tabindex="0" aria-label="Foto auswählen">
+              <input type="file" accept="image/*" />
+              <div>
+                <div class="fileHint">Foto hochladen</div>
+                <small class="fileSmall">JPG/PNG • max. 10MB</small>
+              </div>
+            </div>
+
+            <div class="chip" title="Optional">
+              <span aria-hidden="true">🔎</span> Teilenummer eingeben
+            </div>
+          </div>
+        </div>
+
+        <aside class="glass side" aria-label="Vorschau">
+          <div class="mock">
+            <div class="mockIcon">AI</div>
+            <div>
+              <div class="mockTitle">Erkennung + Preisvorschlag</div>
+              <div class="mockDesc">Marke, Modell, Zustand & Marktpreis automatisch.</div>
+            </div>
+          </div>
+
+          <div class="mock">
+            <div class="mockIcon">🛡️</div>
+            <div>
+              <div class="mockTitle">Verifiziertes Listing</div>
+              <div class="mockDesc">Plausibilitätschecks reduzieren Betrug & Rückfragen.</div>
+            </div>
+          </div>
+
+          <div class="mock">
+            <div class="mockIcon">💬</div>
+            <div>
+              <div class="mockTitle">Direkt chatten</div>
+              <div class="mockDesc">Schnelle Abstimmung mit Interessenten.</div>
+            </div>
+          </div>
+
+          <div class="cta">
+            <div class="car" aria-hidden="true">🚗</div>
+            <div style="flex:1">
+              <h2>Bereit loszulegen?</h2>
+              <p>Scanne dein erstes Teil und erstelle sofort ein Listing – ohne langes Tippen.</p>
+            </div>
+            <button class="btn btnPrimary" type="button">Starten</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section id="how">
+      <div class="container">
+        <h2 class="sectionTitle">So funktioniert’s</h2>
+
+        <div class="grid3">
+          <div class="card">
+            <div class="cardTop">
+              <div class="badge">1</div>
+              <div class="muted" style="font-weight:800">Upload</div>
+            </div>
+            <h3>Foto hochladen</h3>
+            <p>Mache ein Foto deines Autoteils. Unsere KI analysiert es in Sekunden und erkennt die wichtigsten Details.</p>
+          </div>
+
+          <div class="card">
+            <div class="cardTop">
+              <div class="badge">2</div>
+              <div class="muted" style="font-weight:800">KI</div>
+            </div>
+            <h3>KI-Erkennung</h3>
+            <p>Teilename, Kategorie, Zustand und ein Preisvorschlag werden automatisch erkannt. Du kannst alles anpassen.</p>
+          </div>
+
+          <div class="card">
+            <div class="cardTop">
+              <div class="badge">3</div>
+              <div class="muted" style="font-weight:800">Sale</div>
+            </div>
+            <h3>Verkaufen</h3>
+            <p>Veröffentliche dein Listing und chatte direkt mit Käufern. Einfach, schnell und sicher.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+      <div class="container">
+        <div class="split">
+          <div class="list">
+            <div class="li">
+              <div class="ico">🔒</div>
+              <div>
+                <b>Sichere Transaktionen</b>
+                <span>Chatte direkt mit Käufern und vereinbare die Abwicklung sicher und nachvollziehbar.</span>
+              </div>
+            </div>
+            <div class="li">
+              <div class="ico">⚡</div>
+              <div>
+                <b>Blitzschnell</b>
+                <span>Von Foto zu Listing in unter 30 Sekunden – dank KI-Erkennung & Autofill.</span>
+              </div>
+            </div>
+            <div class="li">
+              <div class="ico">🧩</div>
+              <div>
+                <b>Spezialisiert auf Auto</b>
+                <span>Optimiert für Ersatzteile: Kategorien, Zustände, Referenzen und typische Felder.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cta">
+            <div class="car" aria-hidden="true">🛠️</div>
+            <div style="flex:1">
+              <h2>Mehr Verkäufe. Weniger Aufwand.</h2>
+              <p>Erstelle hochwertige Listings, spare Zeit bei Rückfragen und erhöhe die Abschlussquote.</p>
+              <div class="spacer"></div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn btnPrimary" type="button">Jetzt Teil scannen</button>
+                <a class="btn btnGhost" href="#login">Account erstellen</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGIN ANCHOR -->
+    <section id="login">
+      <div class="container">
+        <div class="glass" style="padding:18px; border-radius: var(--radius2);">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div>
+              <div class="kicker"><span class="dot"></span> Für Käufer & Verkäufer</div>
+              <h2 class="sectionTitle" style="margin:10px 0 6px">Anmelden / Registrieren</h2>
+              <p class="muted" style="margin:0; font-weight:650">
+                (Platzhalter) Hier kannst du später dein echtes Login-Formular einbauen.
+              </p>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <button class="btn btnPrimary" type="button">Registrieren</button>
+              <button class="btn btnGhost" type="button">Anmelden</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        © <span id="y"></span> ScanPart • Datenschutz • Impressum
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</body>
 </html>
