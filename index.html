@@ -264,7 +264,7 @@
       gap: 14px;
     }
     @media (max-width: 900px){ .grid3{grid-template-columns:1fr} }
-    
+
     .card{
       padding: 18px;
       border-radius: var(--radius);
@@ -294,6 +294,7 @@
     }
     .card h3{margin: 10px 0 6px; font-size: 16px}
     .card p{margin:0; color: var(--muted); font-weight:600; font-size: 13px}
+
     footer{
       padding: 24px 0 42px;
       color: rgba(229,231,235,.65);
@@ -312,9 +313,9 @@
           <span>ScanPart</span>
         </a>
 
-        <!-- NUR Anmelden (Vorteile/Wie es funktioniert entfernt) -->
+        <!-- Anmelden leitet jetzt auf login.html -->
         <div class="navRight">
-          <a class="btn btnGhost" href="#login" aria-label="Anmelden">Anmelden</a>
+          <a class="btn btnGhost" href="login.html" aria-label="Anmelden">Anmelden</a>
         </div>
       </div>
     </div>
@@ -336,8 +337,6 @@
             In Sekunden – mit Kategorie, Zustand & Preisvorschlag.
           </p>
 
-          <!-- Buttons (Teil scannen / Demo ansehen) + Chips entfernt -->
-          <!-- Nur Upload bleibt -->
           <div class="upload" aria-label="Upload">
             <div class="file" role="button" tabindex="0" aria-label="Foto auswählen">
               <input type="file" accept="image/*" />
@@ -346,11 +345,9 @@
                 <small class="fileSmall">JPG/PNG • max. 10MB</small>
               </div>
             </div>
-
-            <!-- Teilenummer eingeben entfernt -->
           </div>
         </div>
-        <!-- Rechte Seite bleibt (wenn du willst, kann ich die auch entfernen) -->
+
         <aside class="glass side" aria-label="Vorschau">
           <div class="mock">
             <div class="mockIcon">AI</div>
@@ -387,10 +384,11 @@
         </aside>
       </div>
     </div>
-   <section id="how" style="padding: 26px 0;">
+
+    <section id="how" style="padding: 26px 0;">
       <div class="container">
         <h2 class="sectionTitle">So funktioniert’s</h2>
-    
+
         <div class="grid3">
           <div class="card">
             <div class="cardTop">
@@ -400,7 +398,7 @@
             <h3>Foto hochladen</h3>
             <p>Mache ein Foto deines Autoteils. Unsere KI analysiert es in Sekunden und erkennt die wichtigsten Details.</p>
           </div>
-    
+
           <div class="card">
             <div class="cardTop">
               <div class="badge">2</div>
@@ -409,7 +407,7 @@
             <h3>KI-Erkennung</h3>
             <p>Teilename, Kategorie, Zustand und ein Preisvorschlag werden automatisch erkannt. Du kannst alles anpassen.</p>
           </div>
-    
+
           <div class="card">
             <div class="cardTop">
               <div class="badge">3</div>
@@ -421,6 +419,7 @@
         </div>
       </div>
     </section>
+
     <!-- LOGIN ANCHOR -->
     <section id="login" style="padding: 10px 0 26px;">
       <div class="container">
@@ -433,10 +432,13 @@
                 (Platzhalter) Hier kannst du später dein echtes Login-Formular einbauen.
               </p>
             </div>
+
+            <!-- Buttons leiten jetzt auf separate Dateien -->
             <div style="display:flex; gap:10px; flex-wrap:wrap">
-              <button class="btn btnPrimary" type="button">Registrieren</button>
-              <button class="btn btnGhost" type="button">Anmelden</button>
+              <a class="btn btnPrimary" href="signup.html">Registrieren</a>
+              <a class="btn btnGhost" href="login.html">Anmelden</a>
             </div>
+
           </div>
         </div>
       </div>
