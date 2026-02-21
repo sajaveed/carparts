@@ -1,1 +1,316 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScanPart – Registrieren</title>
+  <meta name="description" content="Erstelle dein ScanPart Konto." />
 
+  <style>
+    :root{
+      --bg0:#0b1020;
+      --bg1:#0f172a;
+      --border:rgba(255,255,255,.10);
+
+      --text:#e5e7eb;
+      --muted:rgba(229,231,235,.72);
+
+      --accent:#f59e0b;
+      --accent2:#fb7185;
+
+      --shadow: 0 18px 40px rgba(0,0,0,.42);
+      --radius: 18px;
+      --radius2: 26px;
+
+      --container: 980px;
+      --inputBg: rgba(255,255,255,.04);
+      --inputBorder: rgba(255,255,255,.12);
+      --focus: rgba(245,158,11,.35);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(900px 450px at 15% 10%, rgba(245,158,11,.22), transparent 55%),
+        radial-gradient(800px 420px at 85% 15%, rgba(251,113,133,.16), transparent 55%),
+        radial-gradient(900px 520px at 60% 85%, rgba(245,158,11,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .container{width:min(var(--container), calc(100% - 48px)); margin:0 auto}
+
+    header{
+      position:sticky; top:0; z-index:50;
+      background: linear-gradient(180deg, rgba(11,16,32,.80), rgba(11,16,32,.45));
+      border-bottom:1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0; gap:16px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background:
+        radial-gradient(12px 12px at 30% 30%, rgba(255,255,255,.35), transparent 55%),
+        linear-gradient(135deg, rgba(245,158,11,1), rgba(251,113,133,1));
+      box-shadow: 0 10px 20px rgba(245,158,11,.20);
+    }
+
+    .btn{
+      border:0; cursor:pointer;
+      padding:10px 14px;
+      border-radius: 12px;
+      font-weight:800;
+      display:inline-flex; align-items:center; gap:10px;
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      will-change: transform;
+      user-select:none;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btnPrimary{
+      background: linear-gradient(135deg, var(--accent), #f97316);
+      color:#140a00;
+      box-shadow: 0 14px 26px rgba(245,158,11,.22);
+    }
+    .btnPrimary:hover{filter: brightness(1.05)}
+    .btnGhost{
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      color: rgba(229,231,235,.95);
+    }
+    .btnGhost:hover{background: rgba(255,255,255,.07)}
+
+    .glass{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius2);
+    }
+
+    main{padding: 34px 0 44px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{padding: 22px}
+    .kicker{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(229,231,235,.9);
+      font-weight:800;
+      letter-spacing:.2px;
+      width: fit-content;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px; background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(245,158,11,.14);
+    }
+
+    h1{
+      margin: 12px 0 8px;
+      font-size: clamp(26px, 3.6vw, 38px);
+      letter-spacing: -.6px;
+      line-height: 1.1;
+    }
+    .gradientText{
+      background: linear-gradient(135deg, var(--accent), #f97316 55%, var(--accent2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+    }
+    .sub{margin:0; color: var(--muted); font-weight:650}
+
+    form{margin-top: 16px}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap: 12px}
+    @media (max-width: 520px){ .row{grid-template-columns: 1fr} }
+
+    label{display:block; font-weight:800; margin: 10px 0 6px}
+    input{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border:1px solid var(--inputBorder);
+      background: var(--inputBg);
+      color: var(--text);
+      outline:none;
+    }
+    input::placeholder{color: rgba(229,231,235,.45)}
+    input:focus{
+      border-color: rgba(245,158,11,.55);
+      box-shadow: 0 0 0 4px var(--focus);
+    }
+
+    .help{
+      margin-top: 10px;
+      color: var(--muted);
+      font-weight:650;
+      font-size: 13px;
+    }
+
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top: 14px;
+      align-items:center;
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,.08);
+      margin: 14px 0;
+    }
+
+    .side{
+      padding: 22px;
+      border-radius: var(--radius2);
+      position:relative;
+      overflow:hidden;
+    }
+    .side::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(520px 220px at 40% 20%, rgba(245,158,11,.16), transparent 60%),
+        radial-gradient(520px 220px at 80% 60%, rgba(251,113,133,.12), transparent 60%);
+      pointer-events:none;
+    }
+    .side > *{position:relative}
+
+    .feature{
+      display:flex; gap:12px; align-items:flex-start;
+      padding: 12px 0;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .feature:first-child{border-top:0; padding-top:0}
+    .ico{
+      width:36px; height:36px;
+      border-radius: 14px;
+      background: rgba(245,158,11,.14);
+      border:1px solid rgba(245,158,11,.30);
+      display:grid; place-items:center;
+      flex: 0 0 auto;
+    }
+    .feature b{display:block}
+    .feature span{display:block; color: var(--muted); font-weight:650; font-size: 13px; margin-top: 2px}
+
+    .smallLink{
+      color: rgba(229,231,235,.9);
+      border-bottom: 1px dashed rgba(255,255,255,.25);
+    }
+    .smallLink:hover{border-bottom-color: rgba(245,158,11,.65)}
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="index.html">
+          <span class="logo" aria-hidden="true"></span>
+          <span>ScanPart</span>
+        </a>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <a class="btn btnGhost" href="login.html">Anmelden</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="grid">
+        <section class="glass card" aria-label="Registrieren">
+          <div class="kicker"><span class="dot"></span> Konto erstellen</div>
+          <h1>Registrieren bei <span class="gradientText">ScanPart</span></h1>
+          <p class="sub">Erstelle in 30 Sekunden dein Konto – danach kannst du direkt Listings erstellen.</p>
+
+          <form>
+            <div class="row">
+              <div>
+                <label for="firstName">Vorname</label>
+                <input id="firstName" name="firstName" type="text" placeholder="z.B. Zeeshan" autocomplete="given-name" />
+              </div>
+              <div>
+                <label for="lastName">Nachname</label>
+                <input id="lastName" name="lastName" type="text" placeholder="z.B. Javeed" autocomplete="family-name" />
+              </div>
+            </div>
+
+            <label for="email">E-Mail</label>
+            <input id="email" name="email" type="email" placeholder="name@domain.de" autocomplete="email" />
+
+            <label for="password">Passwort</label>
+            <input id="password" name="password" type="password" placeholder="Mindestens 8 Zeichen" autocomplete="new-password" />
+
+            <label for="password2">Passwort wiederholen</label>
+            <input id="password2" name="password2" type="password" placeholder="Passwort erneut eingeben" autocomplete="new-password" />
+
+            <div class="help">
+              Mit der Registrierung akzeptierst du unsere <a class="smallLink" href="#">Nutzungsbedingungen</a> und <a class="smallLink" href="#">Datenschutz</a>.
+            </div>
+
+            <div class="actions">
+              <button class="btn btnPrimary" type="button">Registrieren</button>
+              <a class="btn btnGhost" href="index.html">Zurück zur Startseite</a>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="help">
+              Schon ein Konto? <a class="smallLink" href="login.html">Jetzt anmelden</a>
+            </div>
+          </form>
+        </section>
+
+        <aside class="glass side" aria-label="Vorteile">
+          <h2 style="margin:0 0 6px; font-size:18px; letter-spacing:-.2px;">Warum ScanPart?</h2>
+          <p class="sub" style="margin:0 0 10px;">Schnell starten – später kannst du alles im Profil anpassen.</p>
+
+          <div class="feature">
+            <div class="ico">⚡</div>
+            <div>
+              <b>Blitzschnell</b>
+              <span>Von Foto zu Listing ohne lange Formulare.</span>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="ico">🛡️</div>
+            <div>
+              <b>Sicher & übersichtlich</b>
+              <span>Verifizierte Datenfelder reduzieren Fehler & Rückfragen.</span>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="ico">💬</div>
+            <div>
+              <b>Chat mit Käufern</b>
+              <span>Einfach kommunizieren und Deals abschließen.</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
